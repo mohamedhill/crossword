@@ -190,11 +190,6 @@ function crosswordSolver(puzzle, words) {
 
 
 }
-const puzzle = `2001
 
-0..0
-1000
-0..0`
-const words = ['casa', 'alan', 'ciao', 'anta']
 
 crosswordSolver(puzzle, words)
