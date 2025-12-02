@@ -1,11 +1,13 @@
 function crosswordSolver(puzzle, words) {
+    // check input
     if (typeof puzzle !== 'string' || !Array.isArray(words) || puzzle.length === 0) {
         console.log('Error');
         return;
     }
 
+    // Validate words
     for (const word of words) {
-        if (typeof word !== 'string' || word.length === 0 || (/[\d]/.test(word))) {
+        if (typeof word !== 'string' || word.length === 0 || !/^[a-zA-Z]+$/.test(word)) {
             console.log('Error');
             return;
         }
@@ -16,6 +18,7 @@ function crosswordSolver(puzzle, words) {
         return;
     }
 
+    //grid
     const lines = puzzle.split('\n')
     const grid = lines.map((a) => a.split(''))
     const rows = grid.length
