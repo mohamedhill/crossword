@@ -85,6 +85,23 @@ function crosswordSolver(puzzle, words) {
     console.log("Error");
     return;
   }
+   const actualStarts = {};
+    for (const slot of slots) {
+        const key = `${slot.row},${slot.col}`;
+        actualStarts[key] = (actualStarts[key] || 0) + 1;
+    }
+
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            if (grid[i][j] !== '.') {
+                if (parseInt(grid[i][j]) !== (actualStarts[`${i},${j}`] || 0)) {
+                    console.log('Error');
+                    return;                                    
+                }
+            }
+        }
+    }
+
 
   //backtracking solver
   const solution = grid.map(row => [...row]);
@@ -190,6 +207,7 @@ function crosswordSolver(puzzle, words) {
 
 
 }
-
+const puzzle = '100\n.1.\n.0.'
+const words = ['asd','ad']
 
 crosswordSolver(puzzle, words)
