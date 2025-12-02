@@ -82,118 +82,119 @@ function crosswordSolver(puzzle, words) {
   }
 
   if (slots.length !== words.length) {
-      console.log("Error");
+    console.log("Error");
+    return;
+  }
+
+  //backtracking solver
+  const solution = grid.map(row => [...row]);
+  let count = 0;
+  let result = null;
+  const used = new Set();
+
+
+  function getPositions(slot) {
+    const pos = [];
+    for (let k = 0; k < slot.len; k++) {
+      const r = slot.dir === 'H' ? slot.row : slot.row + k;
+      const c = slot.dir === 'H' ? slot.col + k : slot.col;
+      pos.push([r, c]);
+    }
+    return pos;
+  }
+
+  function canPlace(slot, word) {
+    if (word.length !== slot.len) return false;
+    const pos = getPositions(slot);
+    for (let k = 0; k < pos.length; k++) {
+      const [r, c] = pos[k];
+      const cur = solution[r][c];
+      if (!/^[0-9]$/.test(cur) && cur !== word[k]) {
+
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function place(slot, word) {
+    const old = [];
+    const pos = getPositions(slot);
+    for (let k = 0; k < pos.length; k++) {
+      const [r, c] = pos[k];
+      old.push(solution[r][c]);
+      solution[r][c] = word[k];
+    }
+    return old;
+  }
+
+  function unplace(slot, old) {
+    const pos = getPositions(slot);
+    for (let k = 0; k < pos.length; k++) {
+      const [r, c] = pos[k];
+      solution[r][c] = old[k];
+    }
+  }
+
+  function solve(idx = 0) {
+    if (count == 1) return;
+    if (idx === slots.length) {
+      count++;
+      if (count === 1) result = solution.map(r => r.join('')).join('\n');
       return;
     }
 
-  //backtracking solver
- const solution = grid.map(row => [...row]);
-    let count = 0;
-    let result = null;
-    const used = new Set();
-    
+    for (const word of words) {
+      if (used.has(word)) continue;
+      if (!canPlace(slots[idx], word)) continue;
 
 
-    function canPlace(slot, word) {
-        if (word.length !== slot.len) return false;
-        for (let k = 0; k < word.length; k++) {
-            let r = slot.row;
-            let c = slot.col;
-            if (slot.dir === 'H') c = slot.col + k;
-            if (slot.dir === 'V') r = slot.row + k;
+      used.add(word);
+      const old = place(slots[idx], word);
+      solve(idx + 1);
+      unplace(slots[idx], old);
+      used.delete(word);
+    }
+  }
 
-            const cur = solution[r][c];
-            if (!/^[0-9]$/.test(cur) && cur !== word[k]) {
-             
-                return false;
-            }
-        }
-        return true;
+  solve();
+  function isValidSolution(solution, words) {
+
+    const letters = [...new Set(words.join(''))].join('');
+
+
+    const regex = new RegExp(`^[.${letters}]+$`);
+
+
+    const flat = solution.replace(/\n/g, '');
+
+
+    if (flat.includes('0') || flat.includes('1') || flat.includes('2')) {
+      return false;
     }
 
-    function place(slot, word) {
-        const old = [];
-        for (let k = 0; k < word.length; k++) {
-            let r = slot.row;
-            let c = slot.col;
-            if (slot.dir === 'H') c = slot.col + k;
-            if (slot.dir === 'V') r = slot.row + k;
-            
-            old.push(solution[r][c]);
-            solution[r][c] = word[k];
-        }
-        return old;
-    }
 
-    function unplace(slot, old) {
-        for (let k = 0; k < slot.len; k++) {
-            let r = slot.row;
-            let c = slot.col;
-            if (slot.dir === 'H') c = slot.col + k;
-            if (slot.dir === 'V') r = slot.row + k;
-          
-        }
-    }
-
-    function solve(idx = 0) {
-        if (count == 1) return;
-        if (idx === slots.length) {
-            count++;
-            if (count === 1) result = solution.map(r => r.join('')).join('\n');
-            return;
-        }
-
-        for (const word of words) {
-            if (used.has(word)) continue;
-            if (!canPlace(slots[idx], word)) continue;
-            console.log('Trying word:', word, 'for slot', slots[idx]);
-
-            used.add(word);
-            const old = place(slots[idx], word);
-            console.log('Current solution state:\n', solution.map(r => r.join('')).join('\n'));
-            solve(idx + 1);
-            unplace(slots[idx], old);
-
-            console.log('Backtracking word:', word, 'from slot', slots[idx]);
-            used.delete(word);
-        }
-    }
-
-    solve();
-    function isValidSolution(solution, words) {
-
-        const letters = [...new Set(words.join(''))].join('');
-
-
-        const regex = new RegExp(`^[.${letters}]+$`);
-
-
-        const flat = solution.replace(/\n/g, '');
-
-
-        if (flat.includes('0') || flat.includes('1') || flat.includes('2')) {
-            return false;
-        }
-
-
-        return regex.test(flat);
-    }
-    if (count === 0) {
-        console.log('No solution');
-    } else if (count > 1) {
-        console.log('Multiple solutions');
+    return regex.test(flat);
+  }
+  if (count === 0) {
+    console.log('No solution');
+  } else if (count > 1) {
+    console.log('Multiple solutions');
+  } else {
+    if (isValidSolution(result, words)) {
+      console.log(result);
     } else {
-        if (isValidSolution(result, words)) {
-            console.log(result);
-        } else {
-            console.log('Error');
-        }
+      console.log('Error');
     }
+  }
+
 
 }
-const emptyPuzzle = `2001
+const puzzle = `2001
+
 0..0
 1000
 0..0`
 const words = ['casa', 'alan', 'ciao', 'anta']
-crosswordSolver(emptyPuzzle,words)
+
+crosswordSolver(puzzle, words)
