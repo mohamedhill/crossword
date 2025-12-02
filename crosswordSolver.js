@@ -91,8 +91,7 @@ function crosswordSolver(puzzle, words) {
     let count = 0;
     let result = null;
     const used = new Set();
-    console.log(grid);
-    console.log(slots);
+    
 
 
     function canPlace(slot, word) {
@@ -105,7 +104,7 @@ function crosswordSolver(puzzle, words) {
 
             const cur = solution[r][c];
             if (!/^[0-9]$/.test(cur) && cur !== word[k]) {
-                console.log('Cannot place', word, 'at', slot, 'due to conflict at', 'row:', r, 'col:', c);
+             
                 return false;
             }
         }
@@ -119,7 +118,7 @@ function crosswordSolver(puzzle, words) {
             let c = slot.col;
             if (slot.dir === 'H') c = slot.col + k;
             if (slot.dir === 'V') r = slot.row + k;
-            console.log('Placing', word[k], 'at', 'row:', r, 'col:', c);
+            
             old.push(solution[r][c]);
             solution[r][c] = word[k];
         }
@@ -132,8 +131,7 @@ function crosswordSolver(puzzle, words) {
             let c = slot.col;
             if (slot.dir === 'H') c = slot.col + k;
             if (slot.dir === 'V') r = slot.row + k;
-            console.log('Unplacing from', 'row:', r, 'col:', c, 'restoring', old[k]);
-            solution[r][c] = old[k];
+          
         }
     }
 
