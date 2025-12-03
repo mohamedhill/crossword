@@ -161,23 +161,23 @@ function crosswordSolver(puzzle, words) {
   }
 
   function solve(idx = 0) {
-    if (count > 1) return;
     if (idx === slots.length) {
       count++;
       if (count === 1) result = solution.map((r) => r.join("")).join("\n");
       return;
     }
-
+    
     for (const word of words) {
       if (used.has(word)) continue;
       if (!canPlace(slots[idx], word)) continue;
-
+      
       used.add(word);
       const old = place(slots[idx], word);
       solve(idx + 1);
       unplace(slots[idx], old);
       used.delete(word);
     }
+    if (count > 1) return;
   }
 
   solve();
@@ -213,5 +213,6 @@ const emptyPuzzle = `2001
 const words = ['casa', 'alan', 'ciao', 'anta']
 
 crosswordSolver(emptyPuzzle, words)
+
 
 
